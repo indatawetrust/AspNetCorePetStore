@@ -53,9 +53,9 @@ namespace IO.Swagger.Controllers
         { 
             //TODO: Uncomment the next line to return response 0 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(0);
-	    _context.Users.Add(body);
-	      _context.SaveChanges();
-		return StatusCode(0);
+			_context.Users.Add(body);
+			_context.SaveChanges();
+			return StatusCode(201);
             //throw new NotImplementedException();
         }
 
@@ -116,11 +116,11 @@ namespace IO.Swagger.Controllers
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(404);
 
-var user = await _context.Users.FirstAsync(b => b.Username == username);
-_context.Users.Remove(user);
-await _context.SaveChangesAsync();
+			var user = await _context.Users.FirstAsync(b => b.Username == username);
+			_context.Users.Remove(user);
+			await _context.SaveChangesAsync();
 
-            return StatusCode(0);
+            return StatusCode(202);
         }
 
         /// <summary>
