@@ -54,9 +54,10 @@ namespace IO.Swagger.Controllers
             //TODO: Uncomment the next line to return response 405 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(405);
 
-	    _context.Pets.Add(body);
-	      _context.SaveChanges();
-		return StatusCode(0);
+	    	_context.Pets.Add(body);
+	      	_context.SaveChanges();
+			
+			return StatusCode(201);
         }
 
         /// <summary>
@@ -79,12 +80,12 @@ namespace IO.Swagger.Controllers
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(404);
 
-		var pet = await _context.Pets.Include(b => b.Tags).FirstAsync(b => b.Id == petId);
-		pet.Tags.Clear();
-		_context.Pets.Remove(pet);
-		await _context.SaveChangesAsync();
+            var pet = await _context.Pets.Include(b => b.Tags).FirstAsync(b => b.Id == petId);
+			pet.Tags.Clear();
+			_context.Pets.Remove(pet);
+			await _context.SaveChangesAsync();
 
-            return StatusCode(0);
+            return StatusCode(204);
         }
 
         /// <summary>
@@ -225,8 +226,8 @@ namespace IO.Swagger.Controllers
             // return StatusCode(405);
 
             var pet = await _context.Pets.FirstAsync(b => b.Id == petId);
-	    pet.Name = name;
-	    pet.Status = (Pet.StatusEnum)Enum.Parse(typeof(Pet.StatusEnum), status);
+	    	pet.Name = name;
+	    	pet.Status = (Pet.StatusEnum)Enum.Parse(typeof(Pet.StatusEnum), status);
             _context.Pets.Update(pet);
             await _context.SaveChangesAsync();
 
