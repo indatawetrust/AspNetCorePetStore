@@ -30,9 +30,9 @@ namespace IO.Swagger.Data
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.0-rtm-35687");
 
-modelBuilder.Entity<Pet>().HasMany(b => b.Tags).WithOne(p => p.Pet)
-    .HasForeignKey(p => p.PetId)
-    .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Pet>().HasMany(b => b.Tags).WithOne(p => p.Pet)
+                .HasForeignKey(p => p.PetId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Tag>(entity =>
             {
@@ -41,7 +41,7 @@ modelBuilder.Entity<Pet>().HasMany(b => b.Tags).WithOne(p => p.Pet)
                 entity.HasOne(d => d.Pet)
                     .WithMany(p => p.Tags)
                     .HasForeignKey(d => d.PetId)
-    .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
