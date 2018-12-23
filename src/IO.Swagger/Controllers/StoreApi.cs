@@ -141,9 +141,10 @@ namespace IO.Swagger.Controllers
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
-    _context.Orders.Add(body);
-	      _context.SaveChanges();
-		return StatusCode(0);
+    		_context.Orders.Add(body);
+	      	_context.SaveChanges();
+			
+			return StatusCode(201);
         }
     }
 }
