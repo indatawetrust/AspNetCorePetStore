@@ -35,7 +35,7 @@ namespace IO.Swagger.Controllers
     { 
         private readonly DataContext _context;
         
-	public StoreApiController(DataContext context)
+	    public StoreApiController(DataContext context)
         {
             _context = context;
         }
@@ -50,7 +50,7 @@ namespace IO.Swagger.Controllers
         [Route("/v2/store/order/{orderId}")]
         [ValidateModelState]
         [SwaggerOperation("DeleteOrder")]
-        public virtual IActionResult DeleteOrder([FromRoute][Required]long? orderId)
+        public async Task<IActionResult> DeleteOrder([FromRoute][Required]long? orderId)
         { 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
@@ -58,8 +58,11 @@ namespace IO.Swagger.Controllers
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(404);
 
-
-            throw new NotImplementedException();
+            var order = await _context.Orders.FirstAsync(b => b.Id == orderId);
+            _context.Orders.Remove(order);
+			await _context.SaveChangesAsync();
+            
+			return StatusCode(204);
         }
 
         /// <summary>

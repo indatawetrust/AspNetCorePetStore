@@ -35,7 +35,7 @@ namespace IO.Swagger.Controllers
     { 
         private readonly DataContext _context;
         
-	public PetApiController(DataContext context)
+	    public PetApiController(DataContext context)
         {
             _context = context;
         }
@@ -100,7 +100,7 @@ namespace IO.Swagger.Controllers
         [ValidateModelState]
         [SwaggerOperation("FindPetsByStatus")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Pet>), description: "successful operation")]
-        public virtual IActionResult FindPetsByStatus([FromQuery][Required()]List<string> status)
+        public async Task<IActionResult> FindPetsByStatus([FromQuery][Required()]List<string> status)
         { 
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(List<Pet>));
@@ -108,15 +108,12 @@ namespace IO.Swagger.Controllers
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
 
-            string exampleJson = null;
-            exampleJson = "<Pet>\n  <id>123456789</id>\n  <name>doggie</name>\n  <photoUrls>\n    <photoUrls>aeiou</photoUrls>\n  </photoUrls>\n  <tags>\n  </tags>\n  <status>aeiou</status>\n</Pet>";
-            exampleJson = "[ {\n  \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ],\n  \"name\" : \"doggie\",\n  \"id\" : 0,\n  \"category\" : {\n    \"name\" : \"name\",\n    \"id\" : 6\n  },\n  \"tags\" : [ {\n    \"name\" : \"name\",\n    \"id\" : 1\n  }, {\n    \"name\" : \"name\",\n    \"id\" : 1\n  } ],\n  \"status\" : \"available\"\n}, {\n  \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ],\n  \"name\" : \"doggie\",\n  \"id\" : 0,\n  \"category\" : {\n    \"name\" : \"name\",\n    \"id\" : 6\n  },\n  \"tags\" : [ {\n    \"name\" : \"name\",\n    \"id\" : 1\n  }, {\n    \"name\" : \"name\",\n    \"id\" : 1\n  } ],\n  \"status\" : \"available\"\n} ]";
-            
-            var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<List<Pet>>(exampleJson)
-            : default(List<Pet>);
             //TODO: Change the data returned
-            return new ObjectResult(example);
+            var pets = await _context.Pets
+                                .Where(p => status.Contains(p.Status.ToString()))
+                                .ToListAsync();
+
+            return Json(pets);
         }
 
         /// <summary>
@@ -174,8 +171,8 @@ namespace IO.Swagger.Controllers
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(404);
 
-
             var pet = await _context.Pets.Include(b => b.Tags).FirstAsync(b => b.Id == petId);
+
             //TODO: Change the data returned
             return new ObjectResult(pet.ToJson());
         }
@@ -205,7 +202,7 @@ namespace IO.Swagger.Controllers
             _context.Pets.Update(body);
             await _context.SaveChangesAsync();
 
-            return StatusCode(0);
+            return StatusCode(204);
         }
 
         /// <summary>

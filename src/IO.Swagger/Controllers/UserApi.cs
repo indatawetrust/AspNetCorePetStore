@@ -120,7 +120,7 @@ namespace IO.Swagger.Controllers
 			_context.Users.Remove(user);
 			await _context.SaveChangesAsync();
 
-            return StatusCode(202);
+            return StatusCode(204);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace IO.Swagger.Controllers
         [ValidateModelState]
         [SwaggerOperation("GetUserByName")]
         [SwaggerResponse(statusCode: 200, type: typeof(User), description: "successful operation")]
-        public virtual IActionResult GetUserByName([FromRoute][Required]string username)
+        public async Task<IActionResult> GetUserByName([FromRoute][Required]string username)
         { 
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(User));
@@ -147,15 +147,9 @@ namespace IO.Swagger.Controllers
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(404);
 
-            string exampleJson = null;
-            exampleJson = "<User>\n  <id>123456789</id>\n  <username>aeiou</username>\n  <firstName>aeiou</firstName>\n  <lastName>aeiou</lastName>\n  <email>aeiou</email>\n  <password>aeiou</password>\n  <phone>aeiou</phone>\n  <userStatus>123</userStatus>\n</User>";
-            exampleJson = "{\n  \"firstName\" : \"firstName\",\n  \"lastName\" : \"lastName\",\n  \"password\" : \"password\",\n  \"userStatus\" : 6,\n  \"phone\" : \"phone\",\n  \"id\" : 0,\n  \"email\" : \"email\",\n  \"username\" : \"username\"\n}";
-            
-            var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<User>(exampleJson)
-            : default(User);
-            //TODO: Change the data returned
-            return new ObjectResult(example);
+            var user = await _context.Users.FirstAsync(b => b.Username == username);
+
+            return Json(user);
         }
 
         /// <summary>
@@ -220,16 +214,37 @@ namespace IO.Swagger.Controllers
         [Route("/v2/user/{username}")]
         [ValidateModelState]
         [SwaggerOperation("UpdateUser")]
-        public virtual IActionResult UpdateUser([FromRoute][Required]string username, [FromBody]User body)
+        public async Task<IActionResult> UpdateUser([FromRoute][Required]string username, [FromBody]User body)
         { 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
 
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(404);
+            
+			var user = await _context.Users.FirstAsync(b => b.Username == username);
 
+            if (user != null) {
+            
+                user.Username = body.Username;
+                user.Password = body.Password;
+                user.FirstName = body.FirstName;
+                user.LastName = body.LastName;
+                user.Email = body.Email;
+                user.Phone = body.Phone;
+                user.UserStatus = body.UserStatus;
 
-            throw new NotImplementedException();
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                return StatusCode(204);
+
+            } else {
+                
+                return StatusCode(400);
+
+            }
+
         }
     }
 }
