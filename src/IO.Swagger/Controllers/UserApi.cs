@@ -165,7 +165,7 @@ namespace IO.Swagger.Controllers
         [ValidateModelState]
         [SwaggerOperation("LoginUser")]
         [SwaggerResponse(statusCode: 200, type: typeof(string), description: "successful operation")]
-        public virtual IActionResult LoginUser([FromQuery][Required()]string username, [FromQuery][Required()]string password)
+        public async Task<IActionResult> LoginUser([FromQuery][Required()]string username, [FromQuery][Required()]string password)
         { 
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(string));
@@ -173,15 +173,24 @@ namespace IO.Swagger.Controllers
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
 
-            string exampleJson = null;
-            exampleJson = "aeiou";
-            exampleJson = "\"\"";
+            var user = await _context.Users.FirstAsync(b => b.Username == username && b.Password == password);
+
+            if (user != null) {
+
+                user.UserStatus = 1;
+
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                return StatusCode(200);
+
+            } else {
+
+                return StatusCode(400);
+
+            }
             
-            var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<string>(exampleJson)
-            : default(string);
-            //TODO: Change the data returned
-            return new ObjectResult(example);
+
         }
 
         /// <summary>
