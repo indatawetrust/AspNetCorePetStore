@@ -23,3 +23,10 @@ cd src/IO.Swagger
 docker build -t io.swagger .
 docker run -p 5000:5000 io.swagger
 ```
+
+## Run in Docker Compose
+
+```
+cd src/IO.Swagger
+docker-compose up --build
+```
